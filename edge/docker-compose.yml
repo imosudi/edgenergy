@@ -18,18 +18,36 @@
 #      - HOUSE_ID=home-01
 #      - EDGE_ID=edge-pi-001
 
-version: "3.8"
+#version: "3.8"
+#services:
+#  mqtt:
+#    image: eclipse-mosquitto:2.0
+#    ports:
+#      - "1883:1883"
+#  edge:
+#    build: .
+#    environment:
+#      HOUSE_ID: "home-01"
+#      EDGE_ID: "edge-pi-01"
+#    depends_on:
+#      - mqtt
+#    volumes:
+#      - ./app/models:/app/models
+
 services:
   mqtt:
     image: eclipse-mosquitto:2.0
     ports:
       - "1883:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+
   edge:
     build: .
     environment:
       HOUSE_ID: "home-01"
       EDGE_ID: "edge-pi-01"
     depends_on:
-      - mqtt
-    volumes:
-      - ./app/models:/app/models
+      mqtt:
+        condition: service_started
+
