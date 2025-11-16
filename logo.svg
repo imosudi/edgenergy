@@ -1,0 +1,151 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<!--
+  smart-edge-energy-monitoring
+  SVG logo / landing graphic
+  Save as "logo.svg" and embed in README.md or web pages.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-label="smart-edge-energy-monitoring logo">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="g-edge" x1="0" x2="1">
+      <stop offset="0%" stop-color="#00C2A8"></stop>
+      <stop offset="100%" stop-color="#0077B6"></stop>
+    </linearGradient>
+    <linearGradient id="g-cloud" x1="0" x2="1">
+      <stop offset="0%" stop-color="#90E0EF"></stop>
+      <stop offset="100%" stop-color="#00B4D8"></stop>
+    </linearGradient>
+    <linearGradient id="g-energy" x1="0" x2="1">
+      <stop offset="0%" stop-color="#FFD166"></stop>
+      <stop offset="100%" stop-color="#FF7A59"></stop>
+    </linearGradient>
+
+    <!-- Soft shadow filter -->
+    <filter id="fs" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.12"></feDropShadow>
+    </filter>
+
+    <!-- Rounded marker for connecting line -->
+    <symbol id="node-dot" viewBox="0 0 20 20">
+      <circle cx="10" cy="10" r="10" fill="#ffffff" opacity="0.95"></circle>
+    </symbol>
+
+    <!-- Typeface fallback -->
+    <style type="text/css">
+      .title { font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-weight: 700; }
+      .subtitle { font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-weight: 500; fill:#555; }
+      .label { font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size:14px; fill:#666; }
+    </style>
+  </defs>
+
+  <!-- Background panel -->
+  <rect x="0" y="0" width="1200" height="360" fill="#ffffff"></rect>
+
+  <!-- Left: Device / Home -->
+  <g transform="translate(70,40)">
+    <!-- house base -->
+    <path d="M40 110 L40 64 L70 44 L100 64 L100 110 Z" fill="#F6F6F9" stroke="#D0D5DD" stroke-width="2" filter="url(#fs)"></path>
+    <!-- roof -->
+    <path d="M20 64 L70 24 L120 64 L100 64 L70 36 L40 64 Z" fill="#0077B6" stroke="#055a8c" stroke-width="2"></path>
+    <!-- door -->
+    <rect x="62" y="82" width="16" height="28" rx="3" fill="#FFD166" stroke="#e0a33b" stroke-width="1"></rect>
+    <!-- plug icon -->
+    <g transform="translate(10,88) scale(0.7)">
+      <rect x="0" y="0" width="36" height="28" rx="4" fill="#FBFBFD" stroke="#D0D5DD" stroke-width="1.5"></rect>
+      <rect x="7" y="6" width="6" height="12" rx="1" fill="#707683"></rect>
+      <rect x="22" y="6" width="6" height="12" rx="1" fill="#707683"></rect>
+      <rect x="9" y="20" width="18" height="4" rx="1" fill="#E6EEF8"></rect>
+    </g>
+
+    <!-- label -->
+    <text x="60" y="140" text-anchor="middle" class="label">Device Layer</text>
+  </g>
+
+  <!-- connector dots/line from Device to Edge -->
+  <g transform="translate(210,170)">
+    <line x1="0" y1="0" x2="170" y2="0" stroke="#E6EEF8" stroke-width="3" stroke-dasharray="6 8"></line>
+    <use href="#node-dot" x="60" y="-10" width="16" height="16"></use>
+    <use href="#node-dot" x="120" y="-10" width="16" height="16"></use>
+  </g>
+
+  <!-- Center: Edge Gateway -->
+  <g transform="translate(400,35)">
+    <!-- device rectangle -->
+    <rect x="0" y="0" rx="14" ry="14" width="260" height="160" fill="url(#g-edge)" stroke="#055a8c" stroke-width="2" filter="url(#fs)"></rect>
+    <!-- small header -->
+    <rect x="0" y="0" width="260" height="40" rx="12" ry="12" fill="#ffffff" opacity="0.12"></rect>
+    <!-- icon: SBC -->
+    <g transform="translate(18,28) scale(0.9)">
+      <rect x="18" y="28" width="36" height="36" rx="6" fill="#ffffff" opacity="0.12"></rect>
+      <circle cx="36" cy="46" r="10" fill="#ffffff" opacity="0.15"></circle>
+      <rect x="33" y="42" width="6" height="8" rx="1" fill="#fff"></rect>
+    </g>
+
+    <!-- text -->
+    <text x="130" y="42" text-anchor="middle" fill="#fff" font-size="20" class="title">Edge Gateway</text>
+
+    <!-- TinyML icons -->
+    <g transform="translate(24,70)">
+      <!-- model block -->
+      <rect x="0" y="0" width="64" height="44" rx="6" fill="#E6FDF6" stroke="#00C2A8"></rect>
+      <text x="32" y="26" text-anchor="middle" class="label" fill="#007a71">TinyML</text>
+    </g>
+    <g transform="translate(112,70)">
+      <rect x="0" y="0" width="64" height="44" rx="6" fill="#FEF7E6" stroke="#FFD166"></rect>
+      <text x="32" y="26" text-anchor="middle" class="label" fill="#b37a17">NILM</text>
+    </g>
+    <g transform="translate(200,70)">
+      <rect x="0" y="0" width="40" height="44" rx="6" fill="#EAF6FF" stroke="#00A0E6"></rect>
+      <text x="20" y="26" text-anchor="middle" class="label" fill="#066fa8">Anom</text>
+    </g>
+
+    <!-- bottom cache icon -->
+    <g transform="translate(18,124)">
+      <rect x="0" y="0" width="224" height="18" rx="6" fill="#ffffff" opacity="0.08"></rect>
+      <text x="112" y="12" text-anchor="middle" class="label" fill="#DFF6F0">Local Buffer · Feature Cache</text>
+    </g>
+
+    <!-- edge label -->
+    <text x="130" y="190" text-anchor="middle" class="label" fill="#444">Edge Layer</text>
+  </g>
+
+  <!-- connector dots/line from Edge to Cloud -->
+  <g transform="translate(700,170)">
+    <line x1="0" y1="0" x2="170" y2="0" stroke="#E6EEF8" stroke-width="3" stroke-dasharray="6 8"></line>
+    <use href="#node-dot" x="60" y="-10" width="16" height="16"></use>
+    <use href="#node-dot" x="120" y="-10" width="16" height="16"></use>
+  </g>
+
+  <!-- Right: Cloud -->
+  <g transform="translate(900,40)">
+    <!-- cloud shape -->
+    <path d="M90 40
+             a26 26 0 0 0 -26 26
+             h-4
+             a22 22 0 0 0 -43 8
+             a18 18 0 0 0 2 36
+             h84
+             a26 26 0 0 0 0 -52
+             z" fill="url(#g-cloud)" stroke="#00A8D8" stroke-width="2" filter="url(#fs)"></path>
+    <!-- bolt icon -->
+    <path d="M80 64 L70 90 L84 90 L74 122 L102 86 L92 86 Z" fill="url(#g-energy)" stroke="#d96b2b" stroke-width="1.2"></path>
+    <!-- cloud text -->
+    <text x="90" y="140" text-anchor="middle" class="title" fill="#026C9E" font-size="18">Cloud Services</text>
+    <text x="90" y="160" text-anchor="middle" class="label">Model retraining · Long-term analytics</text>
+  </g>
+
+  <!-- bottom project title -->
+  <g transform="translate(60,250)">
+    <text x="0" y="0" class="title" font-size="34" fill="#0F172A">smart-edge-energy-monitoring</text>
+    <text x="0" y="30" class="subtitle" font-size="16">Device → Edge → Cloud architecture for real-time residential energy intelligence</text>
+  </g>
+
+  <!-- small footer tags -->
+  <g transform="translate(60,310)">
+    <rect x="0" y="-16" rx="6" ry="6" width="140" height="28" fill="#0077B6" opacity="0.08"></rect>
+    <text x="8" y="6" class="label" fill="#0077B6">EDGE • TINYML • NILM</text>
+    <rect x="160" y="-16" rx="6" ry="6" width="220" height="28" fill="#00C2A8" opacity="0.06"></rect>
+    <text x="168" y="6" class="label" fill="#007B6A">PRIVACY-BY-DESIGN • LOW-LATENCY</text>
+  </g>
+
+</svg>
