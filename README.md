@@ -71,7 +71,7 @@ If you use ReSimHub in your research, please cite as:
   author = {Isiaka, Mosudi},
   title = {EdgeNergy: An open, reproducible device→edge→cloud architecture for real-time smart home energy monitoring.},
   year = {2025},
-  url = {https://github.com/imosudi/ReSimHub},
+  url = {https://github.com/imosudi/EdgeNergy},
   license = {BSD-3-Clause}
 }
 ```
