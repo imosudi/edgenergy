@@ -2,13 +2,13 @@
 **An open, reproducible device→edge→cloud architecture for real-time smart home energy monitoring.**  
 Includes firmware, edge preprocessing, TinyML models (NILM, anomaly detection, forecasting), cloud pipelines, dashboards, and CI/CD infrastructure for benchmarking latency, accuracy, privacy, and bandwidth efficiency.
 
----
+
 
 <!-- Quick Info / Toolchain -->
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-BSD--3--Clause-blueviolet)
 
----
+
 
 <!-- GitHub Topics / Project Tags -->
 ![IoT](https://img.shields.io/badge/topic-IoT-lightgrey?logo=internetofthings)
