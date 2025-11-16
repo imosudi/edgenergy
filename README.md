@@ -1,25 +1,31 @@
-# smart-edge-energy-monitoring
-An open, reproducible device→edge→cloud architecture for real-time smart home energy monitoring. Includes firmware, edge preprocessing, TinyML models (NILM, anomaly detection, forecasting), cloud pipelines, dashboards, and full CI/CD infrastructure for benchmarking latency, accuracy, and privacy.
+# smart-edge-energy-monitoring  
+**An open, reproducible device→edge→cloud architecture for real-time smart home energy monitoring.**  
+Includes firmware, edge preprocessing, TinyML models (NILM, anomaly detection, forecasting), cloud pipelines, dashboards, and CI/CD infrastructure for benchmarking latency, accuracy, privacy, and bandwidth efficiency.
 
+---
 
-<!-- Language / Quick info -->
-![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python)
-![License](https://img.shields.io/badge/license-BSD--3--Clause-blueviolet)
+<!-- Quick Info / Toolchain -->
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![License](https://img.shields.io/badge/License-BSD--3--Clause-blueviolet)
+
+---
 
 <!-- GitHub Topics / Project Tags -->
-![iot](https://img.shields.io/badge/topic-iot-lightgrey)
-![edge-computing](https://img.shields.io/badge/topic-edge--computing-7dd3fc)
-![tinyml](https://img.shields.io/badge/topic-tinyml-ffb86b)
-![smart-home](https://img.shields.io/badge/topic-smart--home-8be9a1)
-![energy-monitoring](https://img.shields.io/badge/topic-energy--monitoring-f9a8d4)
-![nilm](https://img.shields.io/badge/topic-nilm-ffd166)
-![anomaly-detection](https://img.shields.io/badge/topic-anomaly--detection-f5b7b1)
-![raspberry-pi](https://img.shields.io/badge/topic-raspberry--pi-c51a4a?logo=raspberrypi)
+![IoT](https://img.shields.io/badge/topic-IoT-lightgrey?logo=internetofthings)
+![Edge Computing](https://img.shields.io/badge/topic-Edge--Computing-0ea5e9)
+![TinyML](https://img.shields.io/badge/topic-TinyML-faae42)
+![Smart Home](https://img.shields.io/badge/topic-Smart--Home-8be9a1)
+![Energy Monitoring](https://img.shields.io/badge/topic-Energy--Monitoring-f9a8d4)
+![NILM](https://img.shields.io/badge/topic-NILM-ffd166)
+![Anomaly Detection](https://img.shields.io/badge/topic-Anomaly--Detection-f5b7b1)
+![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-SBC-c51a4a?logo=raspberrypi)
 ![Orange Pi](https://img.shields.io/badge/Orange%20Pi-Edge%20SBC-orange?logo=arm)
-![esp32](https://img.shields.io/badge/topic-esp32-2d7bba)
-![mqtt](https://img.shields.io/badge/topic-mqtt-3ddc84)
-![tflite](https://img.shields.io/badge/topic-tflite-ff6b6b)
-![machine-learning](https://img.shields.io/badge/topic-machine--learning-7f5af0)
-![cloud-computing](https://img.shields.io/badge/topic-cloud--computing-00bcd4)
-![home-automation](https://img.shields.io/badge/topic-home--automation-ffd43b)
-![edge-ai](https://img.shields.io/badge/topic-edge--ai-00c2a8)
+![ESP32](https://img.shields.io/badge/topic-ESP32-2d7bba?logo=espressif)
+![MQTT](https://img.shields.io/badge/topic-MQTT-3ddc84?logo=mqtt)
+![TensorFlow Lite](https://img.shields.io/badge/topic-TFLite-ff6b6b?logo=tensorflow)
+![Machine Learning](https://img.shields.io/badge/topic-Machine--Learning-7f5af0)
+![Cloud Computing](https://img.shields.io/badge/topic-Cloud--Computing-00bcd4?logo=icloud)
+![Home Automation](https://img.shields.io/badge/topic-Home--Automation-ffd43b)
+![Edge AI](https://img.shields.io/badge/topic-Edge--AI-00c2a8)
+
+---
