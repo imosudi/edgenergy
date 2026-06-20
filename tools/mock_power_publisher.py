@@ -16,12 +16,18 @@ TOPIC = "home/energy"
 
 def generate_telemetry(step: int) -> dict:
     """
-    Generates realistic home power telemetry.
+    Generates realistic home power telemetry, occasionally injecting grid anomalies.
     Appliance cycle:
     - Base load: 50W constant
     - Fridge: 90W (ON for 15 seconds, OFF for 15 seconds)
     - Microwave: 1100W (ON for 10 seconds every 40 seconds)
     - HVAC: 2200W (ON for 20 seconds every 60 seconds)
+    
+    Grid anomaly cycle (based on step):
+    - Steps 50-55 of every 120s cycle: Voltage Swell (~258V)
+    - Steps 100-110 of every 120s cycle: Voltage Sag (~192V)
+    - Steps 150-160 of every 180s cycle: Overload & Overcurrent (~3850W, ~17.5A)
+    - Steps 70-75 of every 150s cycle: Frequency Deviation (48Hz sample rate)
     """
     # Appliance states based on step count
     fridge_on = (step % 30) < 15
@@ -37,25 +43,41 @@ def generate_telemetry(step: int) -> dict:
     if hvac_on:
         power += 2200.0 + random.uniform(-50.0, 50.0)
 
-    # Voltage (standard ~230V sinusoidal fluctuations)
-    voltage = 230.0 + 2.0 * math.sin(step * 0.1) + random.uniform(-0.5, 0.5)
+    # Overload / Overcurrent injection
+    inject_overload = (step % 180) >= 150 and (step % 180) < 160
+    if inject_overload:
+        # Simulate EV charger or electric heater turning on
+        power += 1500.0 + random.uniform(-30.0, 30.0)
+
+    # Voltage (standard ~230V sinusoidal fluctuations, with sag/swell injection)
+    inject_sag = (step % 120) >= 100 and (step % 120) < 110
+    inject_swell = (step % 120) >= 50 and (step % 120) < 55
+    
+    if inject_sag:
+        voltage = 192.0 + random.uniform(-1.0, 1.0)
+    elif inject_swell:
+        voltage = 258.0 + random.uniform(-1.0, 1.0)
+    else:
+        voltage = 230.0 + 2.0 * math.sin(step * 0.1) + random.uniform(-0.5, 0.5)
 
     # Current (I = P/V with simple power factor adjustment)
     power_factor = 0.95 if power > 100 else 0.8
     current = power / (voltage * power_factor)
 
+    # Frequency sag/swell injection
+    freq = 50
+    inject_freq_dev = (step % 150) >= 70 and (step % 150) < 75
+    if inject_freq_dev:
+        freq = 48
+
     # Generate current transformer waveform samples (ct_sample)
-    # Sinusoidal shape with noise and harmonics if high-power appliances are on
     samples_count = 10
     ct_samples = []
     for i in range(samples_count):
         angle = (2 * math.pi * i) / samples_count
-        # Base wave
         sample_val = current * math.sin(angle)
-        # Add a bit of 3rd harmonic noise if microwave is on (non-linear load)
         if microwave_on:
             sample_val += 0.15 * current * math.sin(3 * angle)
-        # Add random noise
         sample_val += random.uniform(-0.02 * current, 0.02 * current)
         ct_samples.append(round(sample_val, 4))
 
@@ -63,7 +85,7 @@ def generate_telemetry(step: int) -> dict:
         "ts": datetime.utcnow().isoformat() + "Z",
         "device_id": "esp32-001",
         "house_id": "home-01",
-        "sample_rate": 50,
+        "sample_rate": freq,
         "v": round(voltage, 2),
         "i": round(current, 3),
         "p": round(power, 2),

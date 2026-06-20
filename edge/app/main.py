@@ -8,6 +8,8 @@ from app.preprocess import parse_telemetry, extract_features, TransientDetector
 from app.signatures import match_signature
 from app.infer import NILMInferenceEngine
 from app.mqtt_client import EdgeMQTTClient
+from app.anomaly import AnomalyDetector
+from app.forecaster import DemandForecaster
 
 # Setup logging configuration
 logging.basicConfig(
@@ -24,6 +26,10 @@ class EdgeApp:
         logger.info("Initializing EdgeNergy Inference Engine...")
         self.engine = NILMInferenceEngine(config.MODEL_PATH)
         self.transient_detector = TransientDetector(threshold=50.0)
+        self.anomaly_detector = AnomalyDetector()
+        self.forecaster = DemandForecaster()
+        self.last_anomaly_detected = False
+        self.last_active_anomalies = []
         self.last_appliance_states = {} # device_id -> dict of appliance ON/OFF states
         
         logger.info(f"Connecting to MQTT Broker at {config.MQTT_BROKER_HOST}:{config.MQTT_BROKER_PORT}...")
@@ -99,32 +105,51 @@ class EdgeApp:
         # Update cache
         self.last_appliance_states[dev_id] = current_states.copy()
 
-        # 6. Construct and publish disaggregated predictions payload
+        # 6. Run advanced analytics: anomaly detection & forecasting
+        anomaly_detected, active_anomalies = self.anomaly_detector.check_telemetry(telemetry)
+        
+        self.forecaster.add_reading(telemetry["p"])
+        forecast_results = self.forecaster.get_forecasts()
+
+        # 7. Construct and publish disaggregated predictions payload
         prediction_payload = {
             "ts": telemetry["ts"],
             "device_id": telemetry["device_id"],
             "house_id": telemetry["house_id"],
             "appliance_state": result["appliance_state"],
             "appliance_power": result["appliance_power"],
-            "anomaly_detected": result["anomaly_detected"],
+            "anomaly_detected": anomaly_detected,
+            "anomalies": active_anomalies,
+            "forecast": forecast_results,
             "model_mode": result["model_mode"]
         }
         self.client.publish(config.PREDICTIONS_TOPIC, prediction_payload)
 
-        # 7. Publish alerts if triggered
-        if result["anomaly_detected"]:
+        # 8. Publish alerts if triggered or cleared
+        if anomaly_detected or (self.last_anomaly_detected and not anomaly_detected):
+            logger.warning(
+                f"ANOMALY STATUS CHANGE: detected={anomaly_detected}, "
+                f"active_anomalies={active_anomalies}, "
+                f"v={telemetry['v']}V, i={telemetry['i']}A, p={telemetry['p']}W"
+            )
             alert_payload = {
                 "ts": telemetry["ts"],
                 "device_id": telemetry["device_id"],
                 "house_id": telemetry["house_id"],
-                "alert": "Anomalous voltage/power consumption detected at edge",
+                "alert": "Grid / load anomaly detected at edge" if anomaly_detected else "Anomaly cleared",
+                "anomaly_detected": anomaly_detected,
+                "anomalies": active_anomalies,
                 "metrics": {
                     "voltage": telemetry["v"],
                     "current": telemetry["i"],
-                    "power": telemetry["p"]
+                    "power": telemetry["p"],
+                    "sample_rate": telemetry.get("sample_rate", 50)
                 }
             }
             self.client.publish(config.ALERTS_TOPIC, alert_payload)
+            
+        self.last_anomaly_detected = anomaly_detected
+        self.last_active_anomalies = active_anomalies.copy()
 
     def run(self):
         # Register shutdown handlers

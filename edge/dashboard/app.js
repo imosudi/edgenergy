@@ -6,7 +6,8 @@ const clientId = "edgenergy-web-client-" + Math.random().toString(16).substr(2, 
 const topics = {
   telemetry: "home/energy",
   predictions: "home/predictions",
-  events: "home/events"
+  events: "home/events",
+  alerts: "home/alerts"
 };
 
 // UI Elements
@@ -33,9 +34,84 @@ const hvacPowerVal = document.getElementById("power-hvac-val");
 const hvacPowerProgress = document.getElementById("power-hvac-progress");
 const eventsFeedLog = document.getElementById("events-feed-log");
 
-// Initialize Paho MQTT Client
+// Initialize Paho MQTT Client and Chart variables
 let client = null;
 let lastLogTime = 0; // Throttling for logs to prevent visual lag
+
+let demandChart = null;
+const maxHistoryPoints = 30;
+const historyData = Array(maxHistoryPoints).fill(0);
+const chartLabels = [...Array(maxHistoryPoints).fill(""), "+10s", "+30s"];
+
+function initChart() {
+  const canvas = document.getElementById('demand-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  // Create gradient for history line fill
+  const gradHistory = ctx.createLinearGradient(0, 0, 0, 180);
+  gradHistory.addColorStop(0, 'rgba(2, 132, 199, 0.15)');
+  gradHistory.addColorStop(1, 'rgba(2, 132, 199, 0.0)');
+
+  demandChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartLabels,
+      datasets: [
+        {
+          label: 'Historical Load',
+          data: [...historyData, null, null],
+          borderColor: '#0284c7',
+          backgroundColor: gradHistory,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Demand Forecast',
+          data: [...Array(maxHistoryPoints - 1).fill(null), 0, 0, 0],
+          borderColor: '#f59e0b',
+          borderWidth: 2,
+          borderDash: [5, 5],
+          pointRadius: 4,
+          pointBackgroundColor: '#f59e0b',
+          fill: false,
+          tension: 0.0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            font: { family: 'Inter', size: 10 },
+            boxWidth: 12
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false }
+        },
+        y: {
+          min: 0,
+          suggestedMax: 1500,
+          grid: { color: '#e2e8f0' },
+          ticks: {
+            font: { family: 'Inter', size: 9 },
+            callback: function(value) { return value + ' W'; }
+          }
+        }
+      }
+    }
+  });
+}
 
 function initMQTT() {
   console.log(`Connecting to MQTT Broker on ws://${brokerHost}:${brokerPort}/mqtt`);
@@ -68,7 +144,8 @@ function onConnect() {
   client.subscribe(topics.telemetry);
   client.subscribe(topics.predictions);
   client.subscribe(topics.events);
-  addLogEntry("info", `Subscribed to telemetry, predictions, and state transition events.`);
+  client.subscribe(topics.alerts);
+  addLogEntry("info", `Subscribed to telemetry, predictions, events, and alerts.`);
 }
 
 function onFailure(err) {
@@ -101,6 +178,8 @@ function onMessageArrived(message) {
       updatePredictionsUI(data);
     } else if (topic === topics.events) {
       updateEventsFeedUI(data);
+    } else if (topic === topics.alerts) {
+      updateAlertsUI(data);
     }
   } catch (e) {
     console.error("Error parsing message payload:", e, payload);
@@ -110,10 +189,17 @@ function onMessageArrived(message) {
 // UI updates
 function updateTelemetryUI(data) {
   // Update numerical indicators
-  powerVal.textContent = parseFloat(data.p).toFixed(2);
+  const p = parseFloat(data.p);
+  powerVal.textContent = p.toFixed(2);
   voltageVal.textContent = parseFloat(data.v).toFixed(1);
   currentVal.textContent = parseFloat(data.i).toFixed(3);
   rateVal.textContent = data.sample_rate || "--";
+
+  // Update history buffer
+  historyData.push(p);
+  if (historyData.length > maxHistoryPoints) {
+    historyData.shift();
+  }
 
   // Update progress bar (max scale capped at 4000W for visualization)
   const maxPower = 4000;
@@ -167,15 +253,36 @@ function updatePredictionsUI(data) {
     hvacPowerProgress.style.width = hvacPercent + "%";
   }
 
-  // 4. Handle Anomaly logs
-  if (data.anomaly_detected) {
-    addLogEntry(
-      "anomaly",
-      `CRITICAL ALERT: Overcurrent / anomaly flag detected on Node ${data.device_id}. Check load draws!`
-    );
+  // 4. Update demand forecast chart
+  if (demandChart && data.forecast) {
+    const currentVal = historyData[historyData.length - 1];
+    demandChart.data.datasets[0].data = [...historyData, null, null];
+    demandChart.data.datasets[1].data = [
+      ...Array(maxHistoryPoints - 1).fill(null),
+      currentVal,
+      data.forecast.next_10s,
+      data.forecast.next_30s
+    ];
+    demandChart.update('none');
   }
 
-  // 5. General prediction output disaggregation log
+  // 5. Toggle Anomaly Banner and overlays
+  const anomalyBanner = document.getElementById("anomaly-alert-banner");
+  const anomalyText = document.getElementById("anomaly-alert-text");
+  const mainPowerCard = document.querySelector(".main-power-card");
+
+  if (data.anomaly_detected && data.anomalies && data.anomalies.length > 0) {
+    anomalyBanner.classList.remove("d-none");
+    anomalyBanner.classList.add("d-flex");
+    anomalyText.textContent = "Active anomalies: " + data.anomalies.join(", ");
+    mainPowerCard.classList.add("anomaly-active-overlay");
+  } else {
+    anomalyBanner.classList.add("d-none");
+    anomalyBanner.classList.remove("d-flex");
+    mainPowerCard.classList.remove("anomaly-active-overlay");
+  }
+
+  // 6. General prediction output disaggregation log
   const activeAppliances = [];
   if (fridgeActive) activeAppliances.push("Fridge");
   if (microwaveActive) activeAppliances.push("Microwave");
@@ -186,6 +293,14 @@ function updatePredictionsUI(data) {
     : "No major appliances detected";
     
   addLogEntry("prediction", `TinyML disaggregation output: ${disaggregationStr} [Model: ${data.model_mode}]`);
+}
+
+function updateAlertsUI(data) {
+  const type = data.anomaly_detected ? "anomaly" : "info";
+  const anomaliesText = data.anomalies && data.anomalies.length > 0
+    ? ` [Active: ${data.anomalies.join(", ")}]`
+    : "";
+  addLogEntry(type, `Alert update: ${data.alert}${anomaliesText}`);
 }
 
 function updateApplianceUI(element, activeClass, isActive) {
@@ -268,5 +383,7 @@ function addLogEntry(type, message) {
   }
 }
 
-// Start MQTT client on load
-window.addEventListener("load", initMQTT);
+window.addEventListener("load", () => {
+  initChart();
+  initMQTT();
+});
