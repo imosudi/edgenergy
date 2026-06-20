@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- Fonts -->
+    <style type="text/css">
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600&amp;family=Inter:wght@400;500;700&amp;display=swap');
+      .title { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 14px; fill: #0f172a; }
+      .subtitle { font-family: 'Inter', sans-serif; font-size: 11px; fill: #475569; }
+      .desc { font-family: 'Inter', sans-serif; font-size: 10px; fill: #64748b; }
+      .label { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 10px; fill: #0284c7; text-anchor: middle; }
+      .connection-label { font-family: 'Inter', sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle; }
+      .shadow { filter: drop-shadow(0px 4px 10px rgba(15, 23, 42, 0.05)); }
+    </style>
+
+    <!-- Gradients -->
+    <linearGradient id="grad-esp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <linearGradient id="grad-broker" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#e0f2fe" />
+    </linearGradient>
+    <linearGradient id="grad-app" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+    <linearGradient id="grad-tflite" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fef3c7" />
+    </linearGradient>
+    <linearGradient id="grad-dash" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#faf5ff" />
+      <stop offset="100%" stop-color="#f3e8ff" />
+    </linearGradient>
+
+    <!-- Arrow Marker -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#64748b" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#0284c7" />
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="100%" height="100%" fill="none" />
+
+  <!-- Boundaries (Edge Gateway Container) -->
+  <rect x="230" y="30" width="540" height="390" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6,4" />
+  <text x="250" y="55" font-family="'Outfit', sans-serif" font-weight="600" font-size="11px" fill="#94a3b8" letter-spacing="1px">EDGE COMPUTING GATEWAY (e.g. RASPBERRY PI)</text>
+
+  <!-- ESP32 Node Box -->
+  <g class="shadow">
+    <rect x="30" y="165" width="160" height="90" rx="12" fill="url(#grad-esp)" stroke="#94a3b8" stroke-width="1.5" />
+    <!-- ESP32 Emblem icon -->
+    <rect x="45" y="180" width="28" height="28" rx="6" fill="#64748b" />
+    <path d="M 53 194 L 59 184 L 59 194 L 65 194 L 59 204 L 59 194 Z" fill="#ffffff" />
+    <text x="83" y="193" class="title">ESP32 Node</text>
+    <text x="83" y="209" class="subtitle">Hardware Sensor</text>
+    <text x="45" y="238" class="desc">RMS Voltage / Current Ingestion</text>
+  </g>
+
+  <!-- Mosquitto Broker Box -->
+  <g class="shadow">
+    <rect x="280" y="165" width="180" height="90" rx="12" fill="url(#grad-broker)" stroke="#0284c7" stroke-width="1.5" />
+    <!-- Broker Icon -->
+    <rect x="295" y="180" width="28" height="28" rx="6" fill="#0284c7" />
+    <circle cx="309" cy="194" r="6" fill="none" stroke="#ffffff" stroke-width="2" />
+    <circle cx="309" cy="194" r="2" fill="#ffffff" />
+    <text x="333" y="193" class="title">Mosquitto MQTT</text>
+    <text x="333" y="209" class="subtitle">Message Broker</text>
+    <text x="295" y="238" class="desc">TCP Port 1883 / WS Port 9001</text>
+  </g>
+
+  <!-- Dashboard Box -->
+  <g class="shadow">
+    <rect x="280" y="60" width="180" height="75" rx="12" fill="url(#grad-dash)" stroke="#7c3aed" stroke-width="1.5" />
+    <!-- Dashboard Icon -->
+    <rect x="295" y="75" width="24" height="24" rx="5" fill="#7c3aed" />
+    <path d="M 300 87 L 304 83 L 308 87 L 314 81" fill="none" stroke="#ffffff" stroke-width="2" />
+    <text x="330" y="87" class="title">Web Dashboard</text>
+    <text x="330" y="100" class="subtitle">Nginx / Port 8080</text>
+    <text x="295" y="122" class="desc">Dynamic Web UI Reactivity</text>
+  </g>
+
+  <!-- EdgeApp Box -->
+  <g class="shadow">
+    <rect x="540" y="165" width="200" height="90" rx="12" fill="url(#grad-app)" stroke="#16a34a" stroke-width="1.5" />
+    <!-- App Icon -->
+    <rect x="555" y="180" width="28" height="28" rx="6" fill="#16a34a" />
+    <path d="M 569 184 L 561 193 H 569 L 565 204 L 575 193 H 567 Z" fill="#ffffff" />
+    <text x="593" y="193" class="title">EdgeNergy AI</text>
+    <text x="593" y="209" class="subtitle">Python Processing App</text>
+    <text x="555" y="238" class="desc">Transient &amp; Event Handler</text>
+  </g>
+
+  <!-- TinyML nilm.tflite Box -->
+  <g class="shadow">
+    <rect x="540" y="310" width="200" height="75" rx="12" fill="url(#grad-tflite)" stroke="#ea580c" stroke-width="1.5" />
+    <!-- Model Icon -->
+    <rect x="555" y="325" width="24" height="24" rx="5" fill="#ea580c" />
+    <circle cx="567" cy="337" r="4" fill="#ffffff" />
+    <circle cx="561" cy="331" r="2.5" fill="#ffffff" opacity="0.7" />
+    <circle cx="573" cy="343" r="2.5" fill="#ffffff" opacity="0.7" />
+    <text x="590" y="337" class="title">NILM TFLite Model</text>
+    <text x="590" y="350" class="subtitle">nilm.tflite (Regression)</text>
+    <text x="555" y="372" class="desc">Appliance Load Disaggregation</text>
+  </g>
+
+  <!-- Connectors -->
+  <!-- ESP32 to Broker -->
+  <path d="M 190 210 L 272 210" fill="none" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-blue)" />
+  <text x="231" y="200" class="label">Telemetry JSON</text>
+
+  <!-- Broker <-> Dashboard -->
+  <path d="M 370 165 L 370 143" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+  <text x="450" y="152" class="connection-label">WS Telemetry &amp; Predictions</text>
+
+  <!-- Broker -> App -->
+  <path d="M 460 195 L 532 195" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+  <text x="500" y="187" class="connection-label" style="text-anchor: middle;">home/energy</text>
+
+  <!-- App -> Broker (Predictions & Events) -->
+  <path d="M 540 225 L 468 225" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+  <text x="504" y="240" class="connection-label" style="text-anchor: middle;">predictions / events</text>
+
+  <!-- App -> TFLite -->
+  <path d="M 640 255 L 640 302" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+  <text x="682" y="284" class="connection-label">Inference Engine</text>
+
+</svg>

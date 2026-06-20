@@ -35,25 +35,7 @@ It includes firmware templates, edge preprocessing logic, TinyML models (NILM, a
 
 ## 🏗️ Architecture
 
-```mermaid
-flowchart TD
-    subgraph Local_IoT ["Local IoT Layer"]
-        ESP32["ESP32 Energy Sensor Node"]
-    end
-
-    subgraph Edge_Gateway ["Edge Computing Gateway (e.g., Raspberry Pi)"]
-        Broker["Mosquitto MQTT Broker<br/>Port 1883 / 9001 WebSockets"]
-        App["EdgeNergy AI Application<br/>Telemetry Subscriber / NILM Engine"]
-        Dash["Web Dashboard<br/>Nginx Port 8080"]
-        TFLite["TinyML Model<br/>nilm.tflite"]
-    end
-
-    ESP32 -->|Telemetry JSON| Broker
-    Broker <-->|WS Telemetry & Predictions| Dash
-    Broker -->|home/energy| App
-    App -->|Inference Engine| TFLite
-    App -->|home/predictions & home/events| Broker
-```
+![EdgeNergy System Architecture](./images/architecture.svg)
 
 ---
 
