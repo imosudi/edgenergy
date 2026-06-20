@@ -1,166 +1,104 @@
-# ![alt text](images/EdgeNergyLogo.svg) EdgeNergy 
+# <p align="center"><img src="images/EdgeNergy.svg" alt="EdgeNergy Logo" width="300" /><br>EdgeNergy</p>
 
-**An open, reproducible device→edge→cloud architecture for real-time smart home energy monitoring.**  
-Edge-Native Energy Intelligence and Non-Intrusive Load Monitoring (NILM) Platform
+<p align="center">
+  <strong>An open, reproducible device-to-edge-to-cloud architecture for real-time smart home energy monitoring.</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python 3.10+" />
+  <img src="https://img.shields.io/badge/License-BSD--3--Clause-blueviolet" alt="BSD 3-Clause License" />
+  <img src="https://img.shields.io/badge/Docker-Enabled-blue?logo=docker&logoColor=white" alt="Docker Support" />
+  <img src="https://img.shields.io/badge/TinyML-TensorFlow%20Lite-orange?logo=tensorflow&logoColor=white" alt="TinyML Enabled" />
+  <img src="https://img.shields.io/badge/MQTT-Mosquitto-green?logo=mqtt&logoColor=white" alt="MQTT Mosquitto" />
+</p>
+
+---
+
+## 📖 Introduction
 
 EdgeNergy is an edge-computing platform for real-time energy monitoring, appliance disaggregation, and intelligent power analytics. The platform combines IoT telemetry, MQTT messaging, and lightweight AI inference running directly at the network edge to enable low-latency, privacy-preserving energy intelligence.
-Includes firmware, edge preprocessing, TinyML models (NILM, anomaly detection, forecasting), cloud pipelines, dashboards, and CI/CD infrastructure for benchmarking latency, accuracy, privacy, and bandwidth efficiency.
 
-![smart-edge-energy-monitoring](./images/EdgeNergy.svg)
+It includes firmware templates, edge preprocessing logic, TinyML models (NILM, anomaly detection, forecasting), cloud integration templates, web dashboards, and test suites for benchmarking latency, accuracy, privacy, and bandwidth efficiency.
 
-Features
-📡 Real-time energy telemetry ingestion
-🔌 MQTT-based device communication
-🧠 Edge AI inference using TensorFlow Lite
-⚡ Non-Intrusive Load Monitoring (NILM)
-📊 Power consumption analytics
-🏠 Multi-household support
-🐳 Docker-based deployment
-🌐 Lightweight and edge-friendly architecture
-🔒 Local-first processing with minimal cloud dependency
+---
 
+## ⚡ Features
 
-<!-- Quick Info / Toolchain -->
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
-![License](https://img.shields.io/badge/License-BSD--3--Clause-blueviolet)
+* 📡 **Real-Time Telemetry**: Sub-second ingestion of voltage, current, and active power.
+* 🔌 **MQTT Communication**: Lightweight, asynchronous device messaging using Eclipse Mosquitto.
+* 🧠 **TinyML Inference**: Low-latency appliance disaggregation running directly at the edge via TensorFlow Lite.
+* 📊 **Energy Analytics**: Live disaggregated power load breakdown and transient event logging.
+* 🏠 **Local-First & Private**: Process all telemetry locally on the network edge (e.g., Raspberry Pi, Orange Pi) without cloud dependency.
+* 🐳 **Dockerized Stack**: Easy one-command deployment of the broker, AI application, and web dashboard.
 
+---
 
+## 🏗️ Architecture
 
-<!-- GitHub Topics / Project Tags -->
-![IoT](https://img.shields.io/badge/topic-IoT-lightgrey?logo=internetofthings)
-![Edge Computing](https://img.shields.io/badge/topic-Edge--Computing-0ea5e9)
-![TinyML](https://img.shields.io/badge/topic-TinyML-faae42)
-![Smart Home](https://img.shields.io/badge/topic-Smart--Home-8be9a1)
-![Energy Monitoring](https://img.shields.io/badge/topic-Energy--Monitoring-f9a8d4)
-![NILM](https://img.shields.io/badge/topic-NILM-ffd166)
-![Anomaly Detection](https://img.shields.io/badge/topic-Anomaly--Detection-f5b7b1)
-![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-SBC-c51a4a?logo=raspberrypi)
-![Orange Pi](https://img.shields.io/badge/Orange%20Pi-Edge%20SBC-orange?logo=arm)
-![ESP32](https://img.shields.io/badge/topic-ESP32-2d7bba?logo=espressif)
-![MQTT](https://img.shields.io/badge/topic-MQTT-3ddc84?logo=mqtt)
-![TensorFlow Lite](https://img.shields.io/badge/topic-TFLite-ff6b6b?logo=tensorflow)
-![Machine Learning](https://img.shields.io/badge/topic-Machine--Learning-7f5af0)
-![Cloud Computing](https://img.shields.io/badge/topic-Cloud--Computing-00bcd4?logo=icloud)
-![Home Automation](https://img.shields.io/badge/topic-Home--Automation-ffd43b)
-![Edge AI](https://img.shields.io/badge/topic-Edge--AI-00c2a8)
+```mermaid
+flowchart TD
+    subgraph Local IoT Layer
+        ESP32[ESP32 Energy Sensor Node]
+    end
 
+    subgraph Edge Computing Gateway (e.g., Raspberry Pi)
+        Broker[Mosquitto MQTT Broker<br/>Port 1883 / 9001 WebSockets]
+        App[EdgeNergy AI Application<br/>Telemetry Subscriber / NILM Engine]
+        Dash[Web Dashboard<br/>Nginx Port 8080]
+        TFLite[TinyML Model<br/>nilm.tflite]
+    end
 
+    ESP32 -->|Telemetry JSON| Broker
+    Broker <-->|WS Telemetry & Predictions| Dash
+    Broker -->|home/energy| App
+    App -->|Inference Engine| TFLite
+    App -->|home/predictions & home/events| Broker
+```
 
+---
 
-Architecture
-┌───────────────────┐
-│   ESP32 Devices   │
-│  Energy Sensors   │
-└─────────┬─────────┘
-          │
-          │ Telemetry JSON
-          ▼
-┌───────────────────┐
-│      MQTT         │
-│   Mosquitto       │
-│     Broker        │
-└─────────┬─────────┘
-          │
-          ▼
-┌───────────────────┐
-│   EdgeNergy AI    │
-│  Data Processing  │
-│ + NILM Inference  │
-└─────────┬─────────┘
-          │
-          ▼
-┌───────────────────┐
-│ Analytics Layer   │
-│ Predictions       │
-│ Events & Alerts   │
-└───────────────────┘
-Telemetry Format
+## 📂 Project Directory Structure
 
-EdgeNergy expects telemetry messages in JSON format:
-
-{
-  "ts": "2025-11-16T05:00:00.123Z",
-  "device_id": "esp32-001",
-  "house_id": "home-01",
-  "sample_rate": 50,
-  "v": 230.2,
-  "i": 0.48,
-  "p": 110.5,
-  "ct_sample": [
-    0.12,
-    0.13,
-    0.11
-  ]
-}
-Fields
-Field	Description
-ts	UTC timestamp
-device_id	Unique device identifier
-house_id	Household identifier
-sample_rate	Sampling frequency (Hz)
-v	Voltage (V)
-i	Current (A)
-p	Active power (W)
-ct_sample	Optional current transformer waveform samples
-Project Structure
+```text
 EdgeNergy/
-│
-├── app/
-│   ├── config.py
-│   ├── infer.py
-│   ├── main.py
-│   ├── mqtt_client.py
-│   ├── preprocess.py
-│   ├── wait-for-mqtt.sh
+├── docker-compose.yml       # Orchestrates Mosquitto, Edge AI App, and Dashboard
+├── mosquitto.conf           # MQTT broker configuration (TCP & WebSockets)
+├── README.md                # Project documentation
+├── LICENSE                  # BSD 3-Clause License
+├── images/
+│   ├── EdgeNergy.svg        # Main project logo
+│   └── EdgeNergyLogo.svg    # Hexagon lightning emblem
+├── docs/                    # PWA asset sizes & banners
+├── edge/
+│   ├── Dockerfile           # Builds python edge application
+│   ├── app/
+│   │   ├── config.py        # Environment variables & topic configs
+│   │   ├── preprocess.py    # Raw payload validation & transient detector
+│   │   ├── infer.py         # NILM TFLite regression interpreter
+│   │   ├── signatures.py    # Appliance load signature database
+│   │   └── main.py          # Coordinates telemetry loop and event publisher
+│   ├── dashboard/
+│   │   ├── Dockerfile       # Nginx static server builder
+│   │   ├── index.html       # Dashboard UI
+│   │   ├── styles.css       # Light corporate theme stylesheets
+│   │   └── app.js           # MQTT WebSockets listener & UI updater
 │   ├── models/
-│   │   └── nilm.tflite
-│   └── requirements.txt
-│
-├── tests/
-│   └── test_infer.py
-│
-├── docker-compose.yml
-├── Dockerfile
-├── mosquitto.conf
-└── README.md
-Requirements
-Software
-Python 3.10+
-Docker
-Docker Compose
-Mosquitto MQTT Broker
-Python Packages
-pip install -r requirements.txt
-Quick Start
-Clone Repository
-git clone https://github.com/<username>/EdgeNergy.git
+│   │   └── nilm.tflite      # Trained NILM regression model
+│   └── tests/
+│       └── test_infer.py    # Test suites (units & fallbacks)
+└── tools/
+    ├── convert_images.sh    # Script to convert SVGs to PNG sizes
+    ├── generate_dummy_tflite.py
+    └── mock_power_publisher.py # Simulated device telemetry generator
+```
 
-cd EdgeNergy
-Build Containers
-docker-compose build --no-cache
-Start Services
-docker-compose up
+---
 
-Expected output:
+## 📊 Telemetry Format
 
-MQTT is up!
-MQTT connected
-INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
-MQTT Topics
-Telemetry Input
-home/energy
-Future Topics
-home/predictions
-home/events
-home/alerts
-Testing with Mock Telemetry
+EdgeNergy expects device messages in JSON format on the `home/energy` topic:
 
-Run the telemetry publisher:
-
-python mock_power_publisher.py
-
-Example message:
-
+```json
 {
   "ts": "2025-11-16T05:00:00.123Z",
   "device_id": "esp32-001",
@@ -171,105 +109,121 @@ Example message:
   "p": 110.5,
   "ct_sample": [0.12, 0.13, 0.11]
 }
-NILM Model
+```
 
-EdgeNergy uses a TensorFlow Lite model:
+### Telemetry Field Specifications
 
-app/models/nilm.tflite
-
-Current status:
-
-Dummy model supported for development
-Production NILM model planned
-Appliance classification roadmap
-Edge optimisation roadmap
-Roadmap
-Phase 1 — MVP
-MQTT ingestion
-Telemetry validation
-TFLite inference
-Docker deployment
-Phase 2 — Energy Intelligence
-Appliance detection
-Load disaggregation
-Event detection
-Device signatures
-Phase 3 — Advanced Analytics
-Anomaly detection
-Forecasting
-Demand prediction
-Edge federated learning
-Phase 4 — Production Platform
-Dashboard
-Mobile application
-Multi-tenant support
-Cloud synchronisation
-Use Cases
-Smart homes
-Energy audits
-Microgrids
-Building management systems
-Edge AI research
-NILM research
-Demand response systems
-Security
-Local-first architecture
-Edge processing
-Minimal cloud exposure
-MQTT network isolation
-Containerised deployment
-Contributing
-
-Contributions are welcome.
-
-git checkout -b feature/new-feature
-git commit -m "Add new feature"
-git push origin feature/new-feature
-
-Create a Pull Request describing your changes.
-
-
-Vision
-
-Making energy intelligence accessible everywhere through lightweight edge-native AI.
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `ts` | String | UTC ISO 8601 Timestamp |
+| `device_id` | String | Unique hardware sensor identifier |
+| `house_id` | String | Unique household identifier |
+| `sample_rate`| Integer | AC sampling frequency (Hz) |
+| `v` | Float | RMS Voltage (V) |
+| `i` | Float | RMS Current (A) |
+| `p` | Float | Active Power (W) |
+| `ct_sample` | Array | Optional current transformer raw waveform samples |
 
 ---
 
-## License
+## 🚀 Quick Start
 
-This project is licensed under the **BSD 3-Clause License** — see the [LICENSE](./LICENSE) file for details.
+### 1. Requirements
+Ensure you have the following installed on your host system:
+* **Docker**
+* **Docker Compose**
+* **Python 3.10+** (if running the mock publisher locally)
 
+### 2. Clone and Setup
+```bash
+git clone https://github.com/imosudi/EdgeNergy.git
+cd EdgeNergy
 ```
-BSD 3-Clause License
 
-Copyright (c) 2025, Mosudi Isiaka
-All rights reserved.
+### 3. Build & Run
+Compile the containers and launch the edge application, Mosquitto broker, and Nginx web server:
+```bash
+docker compose build --no-cache
+docker compose up -d
 ```
 
+### 4. Running the Telemetry Simulator
+To test the pipeline, run the simulator to stream realistic appliance loads:
+```bash
+docker run --rm --network host \
+  -v $(pwd)/tools:/app/tools \
+  --entrypoint python \
+  smart-edge-energy-monitoring-edge-app /app/tools/mock_power_publisher.py
+```
+
+### 5. Access the Dashboard
+Once started, navigate to your web browser:
+👉 **[http://localhost:8080](http://localhost:8080)**
+
+---
+
+## 📍 Project Roadmap
+
+* **[x] Phase 1 — MVP**:
+  * [x] MQTT Telemetry Ingestion (`home/energy`)
+  * [x] Telemetry parsing & validation
+  * [x] Dummy TFLite inference integration
+  * [x] Dockerized broker & application deployment
+* **[x] Phase 2 — Energy Intelligence**:
+  * [x] Piecewise regression disaggregation model (`nilm.tflite`)
+  * [x] Transient power transition detection ($\Delta P$)
+  * [x] Appliance load signature verification
+  * [x] State change event logging on topic `home/events`
+  * [x] Upgraded light corporate Web Dashboard with breakdown bars and Event Log
+* **[ ] Phase 3 — Advanced Analytics**:
+  * [ ] Edge Anomaly detection (overcurrent & voltage sags)
+  * [ ] Load forecasting & demand prediction models
+  * [ ] Federated learning pipeline for model updates
+* **[ ] Phase 4 — Cloud & Multi-Tenant**:
+  * [ ] Cloud database synchronization (TimescaleDB / InfluxDB)
+  * [ ] User authentication & multi-tenant support
+  * [ ] Mobile application dashboard companion
+
+---
+
+## 🔒 Security & Local-First
+
+* **Network Isolation**: MQTT broker and Edge AI processor run in isolated docker bridge networks.
+* **Privacy-Preserving**: Telemetry disaggregation occurs entirely inside your local network; no private load usage patterns are leaked online.
+* **Minimal Cloud Exposure**: Communication to cloud database synchers is unidirectional and encrypted.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! If you would like to submit improvements:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
 
 ## 👤 Author
 
-**Mosudi Isiaka**  
-📧 [mosudi.isiaka@gmail.com](mailto:mosudi.isiaka@gmail.com)  
-🌐 [https://mioemi.com](https://mioemi.com)   
-💻 [https://github.com/imosudi](https://github.com/imosudi)
+* **Mosudi Isiaka**
+  * 📧 [mosudi.isiaka@gmail.com](mailto:mosudi.isiaka@gmail.com)
+  * 🌐 [mioemi.com](https://mioemi.com)
+  * 💻 [github.com/imosudi](https://github.com/imosudi)
 
+---
 
+## 📜 License & Citation
 
-## Contributing
+This project is licensed under the **BSD 3-Clause License** — see the [LICENSE](./LICENSE) file for details.
 
-Contributions are welcome!  
-Please open an issue or pull request to suggest new features, improvements, or bug fixes.
-
-
-## Citation (Academic Use)
-
-If you use EdgeNergy in your research, please cite as:
-
+### Academic Citation
+If you use EdgeNergy in your research or academic work, please cite it as:
 ```bibtex
 @software{EdgeNergy2025,
   author = {Isiaka, Mosudi},
-  title = {EdgeNergy: An open, reproducible device→edge→cloud architecture for real-time smart home energy monitoring.},
+  title = {EdgeNergy: An open, reproducible device-to-edge-to-cloud architecture for real-time smart home energy monitoring.},
   year = {2025},
   url = {https://github.com/imosudi/EdgeNergy},
   license = {BSD-3-Clause}
