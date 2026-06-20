@@ -5,7 +5,8 @@ const clientId = "edgenergy-web-client-" + Math.random().toString(16).substr(2, 
 
 const topics = {
   telemetry: "home/energy",
-  predictions: "home/predictions"
+  predictions: "home/predictions",
+  events: "home/events"
 };
 
 // UI Elements
@@ -18,10 +19,19 @@ const currentVal = document.getElementById("current-val");
 const rateVal = document.getElementById("rate-val");
 const alertsLog = document.getElementById("alerts-log");
 
-// Appliance Elements
+// Appliance Status Badge Elements
 const fridgeItem = document.getElementById("appliance-fridge");
 const microwaveItem = document.getElementById("appliance-microwave");
 const hvacItem = document.getElementById("appliance-hvac");
+
+// Progress bar allocation elements
+const fridgePowerVal = document.getElementById("power-fridge-val");
+const fridgePowerProgress = document.getElementById("power-fridge-progress");
+const microwavePowerVal = document.getElementById("power-microwave-val");
+const microwavePowerProgress = document.getElementById("power-microwave-progress");
+const hvacPowerVal = document.getElementById("power-hvac-val");
+const hvacPowerProgress = document.getElementById("power-hvac-progress");
+const eventsFeedLog = document.getElementById("events-feed-log");
 
 // Initialize Paho MQTT Client
 let client = null;
@@ -57,7 +67,8 @@ function onConnect() {
   // Subscribe to topics
   client.subscribe(topics.telemetry);
   client.subscribe(topics.predictions);
-  addLogEntry("info", `Subscribed to telemetry [${topics.telemetry}] and predictions [${topics.predictions}]`);
+  client.subscribe(topics.events);
+  addLogEntry("info", `Subscribed to telemetry, predictions, and state transition events.`);
 }
 
 function onFailure(err) {
@@ -88,6 +99,8 @@ function onMessageArrived(message) {
       updateTelemetryUI(data);
     } else if (topic === topics.predictions) {
       updatePredictionsUI(data);
+    } else if (topic === topics.events) {
+      updateEventsFeedUI(data);
     }
   } catch (e) {
     console.error("Error parsing message payload:", e, payload);
@@ -117,20 +130,42 @@ function updateTelemetryUI(data) {
 
 function updatePredictionsUI(data) {
   const state = data.appliance_state;
+  const power = data.appliance_power;
   
   if (!state) return;
 
-  // 1. Update Fridge status
+  // 1. Update Fridge status and power breakdown
   const fridgeActive = !!state.fridge;
   updateApplianceUI(fridgeItem, "active-fridge", fridgeActive);
+  
+  if (power) {
+    const pFridge = parseFloat(power.fridge || 0.0);
+    fridgePowerVal.textContent = pFridge.toFixed(1);
+    const fridgePercent = Math.min((pFridge / 200.0) * 100, 100);
+    fridgePowerProgress.style.width = fridgePercent + "%";
+  }
 
-  // 2. Update Microwave status
+  // 2. Update Microwave status and power breakdown
   const microwaveActive = !!state.microwave;
   updateApplianceUI(microwaveItem, "active-microwave", microwaveActive);
+  
+  if (power) {
+    const pMicro = parseFloat(power.microwave || 0.0);
+    microwavePowerVal.textContent = pMicro.toFixed(1);
+    const microPercent = Math.min((pMicro / 1500.0) * 100, 100);
+    microwavePowerProgress.style.width = microPercent + "%";
+  }
 
-  // 3. Update HVAC status
+  // 3. Update HVAC status and power breakdown
   const hvacActive = !!state.hvac;
   updateApplianceUI(hvacItem, "active-hvac", hvacActive);
+  
+  if (power) {
+    const pHvac = parseFloat(power.hvac || 0.0);
+    hvacPowerVal.textContent = pHvac.toFixed(1);
+    const hvacPercent = Math.min((pHvac / 3500.0) * 100, 100);
+    hvacPowerProgress.style.width = hvacPercent + "%";
+  }
 
   // 4. Handle Anomaly logs
   if (data.anomaly_detected) {
@@ -163,6 +198,51 @@ function updateApplianceUI(element, activeClass, isActive) {
   } else {
     element.classList.remove(activeClass);
     badgeLabel.textContent = "OFF";
+  }
+}
+
+function updateEventsFeedUI(data) {
+  // Clear placeholder if it's there
+  const placeholder = eventsFeedLog.querySelector(".events-placeholder");
+  if (placeholder) {
+    eventsFeedLog.innerHTML = "";
+  }
+
+  const item = document.createElement("div");
+  item.className = "event-log-item";
+  
+  const appNames = {
+    fridge: "Refrigerator",
+    microwave: "Microwave Oven",
+    hvac: "HVAC System"
+  };
+  
+  const appName = appNames[data.appliance] || data.appliance;
+  const badgeClass = data.event === "ON" ? "on" : "off";
+  const sigBadge = data.signature_verified 
+    ? '<span class="sig-badge">✓ Signature Verified</span>' 
+    : '<span class="sig-badge text-warning" style="background: rgba(217, 119, 6, 0.1); color: var(--color-warning); border: 1px solid rgba(217, 119, 6, 0.15);">? Signature Unmatched</span>';
+  
+  const timeStr = new Date().toLocaleTimeString();
+  
+  item.innerHTML = `
+    <div>
+      <span class="fw-semibold text-dark">${appName}</span>
+      <span class="event-badge ${badgeClass} ms-2">${data.event}</span>
+      <div class="text-muted mt-1" style="font-size: 11px;">
+        ${timeStr} | &Delta;P: ${data.delta_p > 0 ? '+' : ''}${data.delta_p} W
+      </div>
+    </div>
+    <div class="text-end">
+      ${sigBadge}
+    </div>
+  `;
+  
+  eventsFeedLog.insertBefore(item, eventsFeedLog.firstChild);
+  
+  // Cap history length
+  if (eventsFeedLog.children.length > 30) {
+    eventsFeedLog.removeChild(eventsFeedLog.lastChild);
   }
 }
 

@@ -82,31 +82,39 @@ class NILMInferenceEngine:
             output_detail = self.output_details[0]
             output_data = self.interpreter.get_tensor(output_detail["index"])
             
-            # Post-process output
-            # For a basic NILM classifier, the output might be appliance activation probabilities
-            # E.g. [p_fridge, p_microwave, p_hvac] or a single scalar probability
             predictions = output_data.tolist()[0]
             
-            # Handle classification/prediction logic
-            # Let's say if prediction probability > 0.5, appliance is ON
-            if isinstance(predictions, list):
+            # Handle regression predictions: outputs are continuous power draws in Watts
+            if isinstance(predictions, list) and len(predictions) >= 3:
+                p_fridge = max(0.0, float(predictions[0]))
+                p_microwave = max(0.0, float(predictions[1]))
+                p_hvac = max(0.0, float(predictions[2]))
+                
+                appliance_power = {
+                    "fridge": round(p_fridge, 1),
+                    "microwave": round(p_microwave, 1),
+                    "hvac": round(p_hvac, 1)
+                }
+                # Determine state flag: active if power draw is above threshold
                 appliance_state = {
-                    "fridge": predictions[0] > 0.5 if len(predictions) > 0 else False,
-                    "microwave": predictions[1] > 0.5 if len(predictions) > 1 else False,
-                    "hvac": predictions[2] > 0.5 if len(predictions) > 2 else False,
-                    "scores": predictions
+                    "fridge": p_fridge > 15.0,
+                    "microwave": p_microwave > 50.0,
+                    "hvac": p_hvac > 50.0
                 }
             else:
-                appliance_state = {
-                    "appliance_active": predictions > 0.5,
-                    "score": predictions
-                }
+                p_val = max(0.0, float(predictions)) if isinstance(predictions, (int, float)) else 0.0
+                appliance_power = {"appliance": round(p_val, 1)}
+                appliance_state = {"appliance_active": p_val > 50.0}
 
-            # Anomaly logic (e.g. if overall active power is higher than a threshold, or by model output)
-            anomaly_detected = False
+            # Anomaly logic (e.g. if overall active power is higher than a threshold)
+            # Or by checking features/voltage
+            voltage = float(features[0]) if len(features) >= 1 else 230.0
+            power = float(features[2]) if len(features) >= 3 else 0.0
+            anomaly_detected = power > 3500.0 or voltage < 180.0 or voltage > 260.0
             
             return {
                 "appliance_state": appliance_state,
+                "appliance_power": appliance_power,
                 "anomaly_detected": anomaly_detected,
                 "model_mode": "tflite"
             }
@@ -119,22 +127,29 @@ class NILMInferenceEngine:
         """
         Mock inference logic when TFLite model is not loaded or errors.
         """
-        # If we have 3 features [v, i, p]
         power = float(features[2]) if len(features) >= 3 else 100.0
         
-        # Simple heuristic-based disaggregation for demo
-        fridge_active = 80.0 < power < 150.0
-        microwave_active = 800.0 < power < 1500.0
-        hvac_active = power > 2000.0
+        # Heuristic disaggregation based on raw aggregate power ranges
+        fridge_active = (80.0 <= power <= 220.0) or (880.0 <= power <= 1400.0) or (2080.0 <= power <= 2600.0) or (power > 3000.0)
+        microwave_active = (1000.0 <= power <= 1500.0) or (3000.0 <= power <= 3600.0)
+        hvac_active = power >= 2000.0
         
-        anomaly_detected = power > 3500.0  # Anomaly if drawing > 3.5kW
+        p_fridge = 110.0 if fridge_active else 0.0
+        p_microwave = 1200.0 if microwave_active else 0.0
+        p_hvac = 2200.0 if hvac_active else 0.0
+        
+        anomaly_detected = power > 3500.0
         
         return {
             "appliance_state": {
                 "fridge": fridge_active,
                 "microwave": microwave_active,
-                "hvac": hvac_active,
-                "raw_power": power
+                "hvac": hvac_active
+            },
+            "appliance_power": {
+                "fridge": p_fridge,
+                "microwave": p_microwave,
+                "hvac": p_hvac
             },
             "anomaly_detected": anomaly_detected,
             "model_mode": "mock_heuristic"
