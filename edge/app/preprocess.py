@@ -1,18 +1,38 @@
+import json
+import logging
 import numpy as np
-from scipy import signal
 
-def extract_features_from_ct(ct_samples, sample_rate=50, n_fft=128):
-    arr = np.array(ct_samples, dtype=np.float32)
-    if arr.size == 0:
-        return np.zeros(64, dtype=np.float32)
+logger = logging.getLogger(__name__)
 
-    if arr.size >= n_fft:
-        window = arr[:n_fft]
+def parse_telemetry(payload_str: str) -> dict:
+    """
+    Parses and validates the raw JSON telemetry payload.
+    Returns the parsed dictionary if valid, or None if invalid.
+    """
+    try:
+        data = json.loads(payload_str)
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse JSON telemetry: {e}")
+        return None
+
+    # Required fields
+    required_fields = ["ts", "device_id", "house_id", "v", "i", "p"]
+    for field in required_fields:
+        if field not in data:
+            logger.warning(f"Missing required field '{field}' in telemetry data.")
+            return None
+
+    return data
+
+def extract_features(data: dict) -> np.ndarray:
+    """
+    Extracts features for the TFLite NILM/anomaly model.
+    If 'ct_sample' is present, converts it to a float32 numpy array.
+    Otherwise, constructs a feature vector from scalar metrics: [voltage, current, power].
+    """
+    if "ct_sample" in data and isinstance(data["ct_sample"], list) and len(data["ct_sample"]) > 0:
+        # Convert waveform to numpy array and ensure it is float32
+        return np.array(data["ct_sample"], dtype=np.float32)
     else:
-        window = np.pad(arr, (0, n_fft - arr.size))
-
-    f = np.abs(np.fft.rfft(window))[:64]
-    stats = np.array([window.mean(), window.std(), window.max(), window.min()], dtype=np.float32)
-    feat = np.concatenate([f, stats])
-    feat = (feat - feat.mean()) / (feat.std() + 1e-6)
-    return feat.astype(np.float32)
+        # Fallback to scalar features
+        return np.array([data["v"], data["i"], data["p"]], dtype=np.float32)

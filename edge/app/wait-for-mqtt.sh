@@ -1,19 +1,18 @@
 #!/bin/sh
-python3 - << 'EOF'
-import time
-import socket
+# wait-for-mqtt.sh
 
-host = "mqtt"
-port = 1883
+set -e
 
-while True:
-    try:
-        with socket.create_connection((host, port), timeout=2):
-            print("MQTT is up!")
-            break
-    except OSError:
-        print("Waiting for MQTT...")
-        time.sleep(1)
-EOF
+host="${MQTT_BROKER_HOST:-localhost}"
+port="${MQTT_BROKER_PORT:-1883}"
 
-exec python3 main.py
+echo "Waiting for MQTT broker at $host:$port..."
+
+# Use netcat (nc) to check if the broker port is open
+until nc -z -w 2 "$host" "$port"; do
+  echo "MQTT broker is unavailable - retrying in 2 seconds..."
+  sleep 2
+done
+
+echo "MQTT is up! Starting application..."
+exec "$@"

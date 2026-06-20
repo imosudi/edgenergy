@@ -1,6 +1,21 @@
-MQTT_BROKER = __import__('os').environ.get('MQTT_BROKER', 'mqtt')
-MQTT_PORT = int(__import__('os').environ.get('MQTT_PORT', 1883))
-HOUSE_ID = __import__('os').environ.get('HOUSE_ID', 'home-01')
-EDGE_ID = __import__('os').environ.get('EDGE_ID', 'edge-pi-001')
-INFERENCE_THRESHOLD = float(__import__('os').environ.get('INFERENCE_THRESHOLD', 0.5))
-MODEL_PATH = __import__('os').environ.get('MODEL_PATH', '/app/models/nilm.tflite')
+import os
+
+# MQTT Broker Configuration
+MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
+MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", 1883))
+MQTT_KEEPALIVE = int(os.getenv("MQTT_KEEPALIVE", 60))
+
+# MQTT Topics
+TELEMETRY_TOPIC = os.getenv("TELEMETRY_TOPIC", "home/energy")
+PREDICTIONS_TOPIC = os.getenv("PREDICTIONS_TOPIC", "home/predictions")
+EVENTS_TOPIC = os.getenv("EVENTS_TOPIC", "home/events")
+ALERTS_TOPIC = os.getenv("ALERTS_TOPIC", "home/alerts")
+
+# TFLite Model Configuration
+# Fallback to local relative path if not running inside the Docker container
+DEFAULT_MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "models",
+    "nilm.tflite"
+)
+MODEL_PATH = os.getenv("MODEL_PATH", DEFAULT_MODEL_PATH)

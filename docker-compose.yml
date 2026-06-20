@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: edgenergy-mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: unless-stopped
+
+  edge-app:
+    build:
+      context: ./edge
+      dockerfile: Dockerfile
+    container_name: edgenergy-edge-app
+    depends_on:
+      - mosquitto
+    environment:
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_BROKER_PORT=1883
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: ./edge/dashboard
+      dockerfile: Dockerfile
+    container_name: edgenergy-dashboard
+    ports:
+      - "8080:80"
+    depends_on:
+      - mosquitto
+    restart: unless-stopped

@@ -1,6 +1,3 @@
-paho-mqtt==1.6.1
-numpy==1.25.0
-tflite-runtime==2.14.0    # on Pi use apt or tflite-runtime wheel matching system
-scipy==1.11.0
-python-dateutil==2.8.2
-pytest==7.4.0
+paho-mqtt>=1.6.1
+numpy>=1.22.0,<2
+tflite-runtime>=2.10.0

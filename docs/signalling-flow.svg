@@ -1,0 +1,57 @@
+<svg width="1100" height="520" viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg">
+
+  <style>
+    .box { fill:#121826; stroke:#4f83ff; stroke-width:2; rx:10; }
+    .title { fill:#e8ecff; font-size:16px; font-weight:600; }
+    .text { fill:#c7d2ff; font-size:13px; }
+    .arrow { stroke:#8ab4ff; stroke-width:2; marker-end:url(#arrow); }
+    .note { fill:#8ab4ff; font-size:12px; }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8ab4ff"></path>
+    </marker>
+  </defs>
+
+  <!-- Boxes -->
+  <rect x="50" y="180" width="240" height="120" class="box"></rect>
+  <text x="170" y="210" text-anchor="middle" class="title">Edge Node</text>
+  <text x="170" y="235" text-anchor="middle" class="text">Camera / SBC</text>
+  <text x="170" y="255" text-anchor="middle" class="text">WebRTC Client</text>
+
+  <rect x="430" y="150" width="260" height="180" class="box"></rect>
+  <text x="560" y="185" text-anchor="middle" class="title">Signalling Server</text>
+  <text x="560" y="210" text-anchor="middle" class="text">Flask + Socket.IO</text>
+  <text x="560" y="235" text-anchor="middle" class="text">Zone-based Rooms</text>
+
+  <rect x="820" y="180" width="240" height="120" class="box"></rect>
+  <text x="940" y="210" text-anchor="middle" class="title">Control Centre</text>
+  <text x="940" y="235" text-anchor="middle" class="text">Browser Viewer</text>
+  <text x="940" y="255" text-anchor="middle" class="text">WebRTC Client</text>
+
+  <!-- Arrows -->
+  <line x1="290" y1="210" x2="430" y2="210" class="arrow"></line>
+  <text x="360" y="195" class="note">JOIN (zone)</text>
+
+  <line x1="430" y1="260" x2="290" y2="260" class="arrow"></line>
+  <text x="360" y="280" class="note">peer-joined</text>
+
+  <line x1="690" y1="210" x2="820" y2="210" class="arrow"></line>
+  <text x="755" y="195" class="note">JOIN (zone)</text>
+
+  <line x1="290" y1="235" x2="430" y2="235" class="arrow"></line>
+  <text x="360" y="320" class="note">SDP Offer</text>
+
+  <line x1="430" y1="235" x2="820" y2="235" class="arrow"></line>
+
+  <line x1="820" y1="260" x2="430" y2="260" class="arrow"></line>
+  <text x="760" y="320" class="note">SDP Answer</text>
+
+  <line x1="430" y1="260" x2="290" y2="260" class="arrow"></line>
+
+  <line x1="290" y1="300" x2="430" y2="300" class="arrow"></line>
+  <line x1="430" y1="300" x2="820" y2="300" class="arrow"></line>
+  <text x="560" y="325" text-anchor="middle" class="note">ICE Candidates (bi-directional)</text>
+
+</svg>

@@ -1,32 +1,23 @@
 FROM python:3.10-slim
 
-# Install system packages
+# Install system dependencies (like netcat for checking MQTT port status)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Install dependencies
-COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy requirements first for caching
+COPY app/requirements.txt /app/app/requirements.txt
+RUN pip install --no-cache-dir -r /app/app/requirements.txt
 
-# Copy the model first
-COPY app/models/nilm.tflite /app/models/nilm.tflite
+# Copy the application source code and models
+COPY app/ /app/app/
+COPY models/ /app/models/
 
-# Now copy the application code
-COPY app/ /app/
+# Make the wait-for-mqtt script executable
+RUN chmod +x /app/app/wait-for-mqtt.sh
 
-
-# Make wait-for-mqtt executable
-RUN chmod +x /app/wait-for-mqtt.sh
-
-# Environment variables
-ENV MQTT_BROKER=mqtt \
-    MQTT_PORT=1883 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-# Start script that waits for MQTT before launching main.py
-CMD ["/app/wait-for-mqtt.sh"]
+# Run the application using python -m app.main
+ENTRYPOINT ["/app/app/wait-for-mqtt.sh"]
+CMD ["python", "-m", "app.main"]
