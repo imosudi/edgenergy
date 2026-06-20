@@ -33,3 +33,39 @@ services:
     depends_on:
       - mosquitto
     restart: unless-stopped
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: edgenergy-influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpassword123
+      - DOCKER_INFLUXDB_INIT_ORG=edgenergy
+      - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-token-12345
+    restart: unless-stopped
+
+  cloud-sync:
+    build:
+      context: ./cloud
+      dockerfile: Dockerfile
+    container_name: edgenergy-cloud-sync
+    depends_on:
+      - mosquitto
+      - influxdb
+    environment:
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_BROKER_PORT=1883
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=my-super-secret-token-12345
+      - INFLUXDB_ORG=edgenergy
+      - INFLUXDB_BUCKET=telemetry
+    restart: unless-stopped
+
+volumes:
+  influxdb-data:

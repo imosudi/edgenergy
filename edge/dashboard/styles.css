@@ -458,3 +458,31 @@ body {
 .chart-card {
   min-height: 250px;
 }
+
+/* Cloud DB Sync Card Styling */
+.db-status-online {
+  border-color: rgba(5, 150, 105, 0.2) !important;
+}
+
+.db-status-online .status-indicator {
+  background-color: var(--color-success) !important;
+  box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
+}
+
+.db-status-offline {
+  border-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+.db-status-offline .status-indicator {
+  background-color: var(--color-danger) !important;
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.4);
+}
+
+.db-status-degraded {
+  border-color: rgba(217, 119, 6, 0.2) !important;
+}
+
+.db-status-degraded .status-indicator {
+  background-color: var(--color-warning) !important;
+  box-shadow: 0 0 6px rgba(217, 119, 6, 0.4);
+}

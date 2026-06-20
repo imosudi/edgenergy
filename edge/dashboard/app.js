@@ -7,7 +7,8 @@ const topics = {
   telemetry: "home/energy",
   predictions: "home/predictions",
   events: "home/events",
-  alerts: "home/alerts"
+  alerts: "home/alerts",
+  status_cloud: "home/status/cloud"
 };
 
 // UI Elements
@@ -145,7 +146,8 @@ function onConnect() {
   client.subscribe(topics.predictions);
   client.subscribe(topics.events);
   client.subscribe(topics.alerts);
-  addLogEntry("info", `Subscribed to telemetry, predictions, events, and alerts.`);
+  client.subscribe(topics.status_cloud);
+  addLogEntry("info", `Subscribed to telemetry, predictions, events, alerts, and cloud status.`);
 }
 
 function onFailure(err) {
@@ -180,6 +182,8 @@ function onMessageArrived(message) {
       updateEventsFeedUI(data);
     } else if (topic === topics.alerts) {
       updateAlertsUI(data);
+    } else if (topic === topics.status_cloud) {
+      updateCloudStatusUI(data);
     }
   } catch (e) {
     console.error("Error parsing message payload:", e, payload);
@@ -380,6 +384,27 @@ function addLogEntry(type, message) {
   // Cap log history length
   if (alertsLog.children.length > 50) {
     alertsLog.removeChild(alertsLog.lastChild);
+  }
+}
+
+function updateCloudStatusUI(data) {
+  const badge = document.getElementById("db-status-badge");
+  const badgeLabel = document.getElementById("db-status-text");
+  const counterLabel = document.getElementById("sync-records-label");
+
+  if (data.db_connected && data.status === "online") {
+    badge.className = "appliance-status-badge d-flex align-items-center gap-2 px-3 py-1 rounded-pill border db-status-online";
+    badgeLabel.textContent = "ONLINE";
+  } else if (data.status === "degraded") {
+    badge.className = "appliance-status-badge d-flex align-items-center gap-2 px-3 py-1 rounded-pill border db-status-degraded";
+    badgeLabel.textContent = "DEGRADED";
+  } else {
+    badge.className = "appliance-status-badge d-flex align-items-center gap-2 px-3 py-1 rounded-pill border db-status-offline";
+    badgeLabel.textContent = "OFFLINE";
+  }
+
+  if (data.records_synced !== undefined) {
+    counterLabel.textContent = `${data.records_synced} records synced`;
   }
 }
 
