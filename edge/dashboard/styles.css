@@ -1,0 +1,328 @@
+/* EdgeNergy: Professional Corporate Light Theme */
+
+:root {
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Palette: Clean Corporate Slate & Steel Blue (Light Theme) */
+  --bg-base: #f8fafc;           /* Light slate background */
+  --bg-surface: #ffffff;        /* Pure white card backgrounds */
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;       /* Soft grey border */
+  --input-bg: #f1f5f9;          /* Light grey-blue for nested areas */
+  
+  --color-text-primary: #0f172a;   /* Dark navy/slate text */
+  --color-text-secondary: #475569; /* Cool grey text */
+  --color-text-muted: #94a3b8;     /* Light grey text */
+  
+  /* System State Colors */
+  --color-brand: #0284c7;       /* Corporate Blue */
+  --color-brand-hover: #0369a1;
+  --color-success: #059669;     /* Emerald Green (Active) */
+  --color-warning: #d97706;     /* Amber */
+  --color-danger: #dc2626;      /* Corporate Red (Anomaly) */
+}
+
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-base);
+  background-image: radial-gradient(1200px at 50% 0px, rgba(2, 132, 199, 0.05) 0%, transparent 100%);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main Dashboard Layout */
+.dashboard-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  padding: 32px 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header */
+.dashboard-header {
+  background: var(--bg-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+}
+
+.logo-text h1 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+}
+
+.small-tag {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--color-text-secondary);
+}
+
+/* Connection Status */
+.connection-status-panel {
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot.connected {
+  background-color: var(--color-success);
+  box-shadow: 0 0 6px rgba(5, 150, 105, 0.3);
+}
+
+.status-dot.disconnected {
+  background-color: var(--color-danger);
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.3);
+}
+
+.status-text {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+/* Cards Design */
+.glass-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(2, 132, 199, 0.15);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Power display area */
+.power-display {
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+}
+
+.power-value {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--color-text-primary);
+}
+
+.power-unit {
+  font-size: 20px;
+  color: var(--color-text-secondary);
+  margin-left: 2px;
+}
+
+.power-progress-track {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+.power-progress-fill {
+  background: var(--color-brand);
+  box-shadow: none;
+  transition: width 0.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+/* Sub metrics */
+.sub-metric {
+  background: #f8fafc;
+  border: 1px solid var(--card-border);
+}
+
+.metric-label {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+}
+
+.metric-value-wrapper {
+  color: var(--color-text-primary);
+  font-size: 16px;
+}
+
+.metric-unit {
+  font-size: 11px;
+}
+
+/* Event Logs */
+.alerts-log-container::-webkit-scrollbar {
+  width: 3px;
+}
+
+.alerts-log-container::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.log-entry {
+  background: #f8fafc;
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--color-brand);
+  border-radius: 8px;
+}
+
+.log-entry.info {
+  border-left-color: var(--color-text-secondary);
+}
+
+.log-entry.prediction {
+  border-left-color: var(--color-brand);
+}
+
+.log-entry.anomaly {
+  border-left-color: var(--color-danger);
+  background: rgba(220, 38, 38, 0.02);
+}
+
+.log-type {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.log-entry.info .log-type { color: var(--color-text-secondary); }
+.log-entry.prediction .log-type { color: var(--color-brand); }
+.log-entry.anomaly .log-type { color: var(--color-danger); }
+
+.log-time {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.log-body {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+/* Appliance list */
+.appliance-item {
+  background: #f8fafc;
+  border-color: var(--card-border);
+  transition: all 0.25s ease;
+}
+
+.appliance-icon-area {
+  background: rgba(15, 23, 42, 0.03);
+  color: var(--color-text-secondary);
+  transition: all 0.25s ease;
+}
+
+.appliance-details h3 {
+  font-size: 14px;
+}
+
+.signature-tag {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.appliance-status-badge {
+  background: #ffffff;
+  border-color: var(--card-border);
+}
+
+.appliance-status-badge .status-indicator {
+  width: 5px;
+  height: 5px;
+  background: var(--color-text-muted);
+}
+
+.appliance-status-badge .status-lbl {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+/* Active Appliance States (Clean Corporate Emerald Accent) */
+.appliance-item.active-fridge,
+.appliance-item.active-microwave,
+.appliance-item.active-hvac {
+  background: rgba(5, 150, 105, 0.03);
+  border-color: rgba(5, 150, 105, 0.25);
+}
+
+.appliance-item.active-fridge .appliance-icon-area,
+.appliance-item.active-microwave .appliance-icon-area,
+.appliance-item.active-hvac .appliance-icon-area {
+  background: rgba(5, 150, 105, 0.08);
+  color: var(--color-success);
+}
+
+.appliance-item.active-fridge .appliance-status-badge,
+.appliance-item.active-microwave .appliance-status-badge,
+.appliance-item.active-hvac .appliance-status-badge {
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.15);
+}
+
+.appliance-item.active-fridge .status-indicator,
+.appliance-item.active-microwave .status-indicator,
+.appliance-item.active-hvac .status-indicator {
+  background: var(--color-success);
+  box-shadow: 0 0 4px var(--color-success);
+}
+
+.appliance-item.active-fridge .status-lbl,
+.appliance-item.active-microwave .status-lbl,
+.appliance-item.active-hvac .status-lbl {
+  color: var(--color-success);
+}
+
+/* Footer Styling */
+.dashboard-footer {
+  background: var(--bg-surface);
+  border-color: var(--card-border) !important;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
+}
+
+.author-details-box {
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.author-details-box a {
+  color: var(--color-brand);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.author-details-box a:hover {
+  color: var(--color-brand-hover);
+}
+
+.text-muted-opacity {
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+}

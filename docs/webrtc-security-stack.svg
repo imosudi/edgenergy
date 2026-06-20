@@ -1,0 +1,40 @@
+<svg width="900" height="560" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+
+  <style>
+    .layer { rx:14; ry:14; stroke-width:2; }
+    .title { fill:#ffffff; font-size:16px; font-weight:600; }
+    .text { fill:#e6ebff; font-size:13px; }
+  </style>
+
+  <!-- Layers -->
+  <rect x="200" y="60" width="500" height="80" fill="#2e7d32" stroke="#66ff99" class="layer"></rect>
+  <text x="450" y="95" text-anchor="middle" class="title">Application Layer</text>
+  <text x="450" y="118" text-anchor="middle" class="text">
+    Browser UI · Edge Node · Control Centre
+  </text>
+
+  <rect x="200" y="160" width="500" height="80" fill="#1565c0" stroke="#8ab4ff" class="layer"></rect>
+  <text x="450" y="195" text-anchor="middle" class="title">Signalling Security</text>
+  <text x="450" y="218" text-anchor="middle" class="text">
+    HTTPS (TLS 1.3) · Secure WebSocket (WSS)
+  </text>
+
+  <rect x="200" y="260" width="500" height="80" fill="#283593" stroke="#9fa8da" class="layer"></rect>
+  <text x="450" y="295" text-anchor="middle" class="title">Session Negotiation</text>
+  <text x="450" y="318" text-anchor="middle" class="text">
+    DTLS Handshake · Certificate Fingerprint Verification
+  </text>
+
+  <rect x="200" y="360" width="500" height="80" fill="#4527a0" stroke="#b39ddb" class="layer"></rect>
+  <text x="450" y="395" text-anchor="middle" class="title">Media Transport</text>
+  <text x="450" y="418" text-anchor="middle" class="text">
+    SRTP / SRTCP · AES-128 / AES-256 Encryption
+  </text>
+
+  <rect x="200" y="460" width="500" height="80" fill="#1b1f2b" stroke="#90caf9" class="layer"></rect>
+  <text x="450" y="495" text-anchor="middle" class="title">Network Traversal</text>
+  <text x="450" y="518" text-anchor="middle" class="text">
+    ICE · STUN · TURN (Optional Relay)
+  </text>
+
+</svg>
